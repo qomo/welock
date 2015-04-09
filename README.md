@@ -21,3 +21,4 @@ URXD  <<--->> D10
 具体关于ESP8266的测试命令，还可以参考：
 > http://rancidbacon.com/files/kiwicon8/ESP8266_WiFi_Module_Quick_Start_Guide_v_1.0.4.pdf
 
+NOTE：这个方式同样适用于测试其他串口通信的外围硬件，如蓝牙模块
