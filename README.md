@@ -22,3 +22,20 @@ URXD  <<--->> D10
 > http://rancidbacon.com/files/kiwicon8/ESP8266_WiFi_Module_Quick_Start_Guide_v_1.0.4.pdf
 
 NOTE：这个方式同样适用于测试其他串口通信的外围硬件，如蓝牙模块
+
+## Arduino Ethernet Shield ＋ Yeelink
+目录：/yeelink_demo  
+这是用Arduino Ethernet Shield网络模块与Yeelink平台实现的welock demo  
+*硬件部分*，一个LED灯暂时模拟控制门锁的舵机  
+一个开关（这里用的是触动开关）用于获取门的状态（开／关）。当把门合起时，自动获取关门动作  
+另一个开关用做本地开门的动作，置于门内侧  
+
+另一个开门动作由微信触发，用作门外开门（基本已经完成，待与yeelink连接）  
+
+*使用场景介绍：*  
+假如要从外面开门进入室内，需要用微信扫描门锁上的二维码，微信给SAE服务器发送响应指令，SAE向yeelink发送开门指令，Arduino轮训yeelink上的开门指令获得开门指令，实施开门  
+进入室内后，用手将门合上，自动触发门锁上的关门开关，Arduino执行关门动作，向yeelink更新门闭合的状态。  
+若要从室内开门，直接按门内侧上的开门按钮，Arduino执行开门动作，向yeelink更新门开启的状态。  
+出到室外后，用手带上门，自动触发门锁上的关门开关……  
+
+> 接下来需要做一些真正的模型
