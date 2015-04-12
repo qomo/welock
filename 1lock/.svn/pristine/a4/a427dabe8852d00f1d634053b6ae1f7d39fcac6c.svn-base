@@ -34,18 +34,8 @@ class ArduinoHandler(tornado.web.RequestHandler):
         self.state = self.get_argument('updata')
         lock = Lock(self.lockticket, self.lockadmin)
         if self.state == '2':
-            if lock.islocked():
-                self.write("1")
-            else:
-                self.write("0")
-        elif self.state == '0':
-            lock.unlock()
-            self.write("unlock")
-        elif self.state == '1':
-            lock.lock()
-            self.write("lock")
-        else:
-            self.write("ERROR")
+            self.write(lock.islocked)
+        self.write("hello")
 
 
 class MainHandler(tornado.web.RequestHandler):

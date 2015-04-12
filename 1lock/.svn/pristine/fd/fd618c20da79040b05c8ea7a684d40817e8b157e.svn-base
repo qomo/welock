@@ -6,7 +6,9 @@ import _mysql
 from tornado import database
 from wechat_sdk.basic import WechatBasic
 import random
-
+import urllib
+import urllib2
+import httplib
 
 TOKEN = "qomoliaolock"
 APPID = "wx9269cc9dd3387056"
@@ -17,6 +19,7 @@ MENU = '''欢迎关注1lock，这是一个用微信控制的门锁:
 '''
 
 
+
 MYSQL_DB = sae.const.MYSQL_DB
 MYSQL_USER = sae.const.MYSQL_USER
 MYSQL_PASS = sae.const.MYSQL_PASS
@@ -25,28 +28,6 @@ MYSQL_HOST_S = sae.const.MYSQL_HOST_S
 MYSQL_PORT = sae.const.MYSQL_PORT
 
 wechat = WechatBasic(token=TOKEN, appid=APPID, appsecret=APPSECRET)
-
-class ArduinoHandler(tornado.web.RequestHandler):
-    """响应Arduino的查询和更新锁状态"""
-    def get(self):
-        self.lockticket = self.get_argument('lockticket')
-        self.lockadmin = self.get_argument('lockadmin')
-        self.state = self.get_argument('updata')
-        lock = Lock(self.lockticket, self.lockadmin)
-        if self.state == '2':
-            if lock.islocked():
-                self.write("1")
-            else:
-                self.write("0")
-        elif self.state == '0':
-            lock.unlock()
-            self.write("unlock")
-        elif self.state == '1':
-            lock.lock()
-            self.write("lock")
-        else:
-            self.write("ERROR")
-
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -264,6 +245,7 @@ class Lock():
     def unlock(self):
         if self.check_key():
             self.mdb.execute("UPDATE `lock` SET `state` = %s WHERE `lockname` = %s", False, self.__lockname)
+            # 这一句不是通用的，只是为了快速实现这个welock
             return True
         else:
             return False
@@ -348,10 +330,20 @@ def dellock(lockname, bosskey):
 def check_boss(bosskey):
     return bosskey=="ofGrFjt2u8N0V2oHVm7zPF90ECx4"
 
+class Qrcode(tornado.web.RequestHandler):
+    """生成二维码ticket"""
+    def get(self):
+        # 打开生成页面
+        self.render("qrcode.html")
+
+    def post(self):
+        # 生成二维码需要用post方法
+        pass
+        
 
 
 urls = [(r"/", MainHandler),
-        (r"/lockstate", ArduinoHandler),
+        # (r"/qrcode", Qrcode),
         ]
 
 

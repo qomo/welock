@@ -38,14 +38,12 @@ class ArduinoHandler(tornado.web.RequestHandler):
                 self.write("1")
             else:
                 self.write("0")
-        elif self.state == '0':
+        else if self.state == '0':
             lock.unlock()
             self.write("unlock")
-        elif self.state == '1':
+        else if self.state == '1':
             lock.lock()
             self.write("lock")
-        else:
-            self.write("ERROR")
 
 
 class MainHandler(tornado.web.RequestHandler):

@@ -6,7 +6,11 @@ import _mysql
 from tornado import database
 from wechat_sdk.basic import WechatBasic
 import random
-
+import httplib
+import json
+import time
+import os
+os.environ['disable_fetchurl'] = "1"
 
 TOKEN = "qomoliaolock"
 APPID = "wx9269cc9dd3387056"
@@ -15,6 +19,9 @@ APPSECRET = "bd606db899aa6173ee0d2a66ba9d8706"
 MENU = '''欢迎关注1lock，这是一个用微信控制的门锁:
 请微信扫描门锁上的二维码^_^
 '''
+
+# 这个是yeelink的apikey
+Myapikey = '56a0a6abac1515d8fba7b65d170fd0d3'
 
 
 MYSQL_DB = sae.const.MYSQL_DB
@@ -25,28 +32,6 @@ MYSQL_HOST_S = sae.const.MYSQL_HOST_S
 MYSQL_PORT = sae.const.MYSQL_PORT
 
 wechat = WechatBasic(token=TOKEN, appid=APPID, appsecret=APPSECRET)
-
-class ArduinoHandler(tornado.web.RequestHandler):
-    """响应Arduino的查询和更新锁状态"""
-    def get(self):
-        self.lockticket = self.get_argument('lockticket')
-        self.lockadmin = self.get_argument('lockadmin')
-        self.state = self.get_argument('updata')
-        lock = Lock(self.lockticket, self.lockadmin)
-        if self.state == '2':
-            if lock.islocked():
-                self.write("1")
-            else:
-                self.write("0")
-        elif self.state == '0':
-            lock.unlock()
-            self.write("unlock")
-        elif self.state == '1':
-            lock.lock()
-            self.write("lock")
-        else:
-            self.write("ERROR")
-
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -264,6 +249,9 @@ class Lock():
     def unlock(self):
         if self.check_key():
             self.mdb.execute("UPDATE `lock` SET `state` = %s WHERE `lockname` = %s", False, self.__lockname)
+            deviceID = '19669'
+            sensorID = '34503'
+            upload(deviceID, sensorID, 1)# 这一句不是通用的，只是为了快速实现这个welock
             return True
         else:
             return False
@@ -349,9 +337,44 @@ def check_boss(bosskey):
     return bosskey=="ofGrFjt2u8N0V2oHVm7zPF90ECx4"
 
 
+# DEALdata()和upload()函数用于向yeelink更新数据
+def DEALdata(value):  #value is int or float of Python's type.
+        tempdeal = time.localtime()
+        newtime = str(tempdeal[0]) + '-' + str(tempdeal[1]) + '-' + str(tempdeal[2]) + 'T' + str(tempdeal[3]) +':' + str(tempdeal[4]) + ':' + str(tempdeal[5])
+        data = {
+                "timestamp":newtime,
+                "value":value
+                }
+        return json.JSONEncoder().encode(data)
+        
+def upload(deviceID,sensorID,value):
+        yeelink = 'http://api.yeelink.net/v1.0/device/' + deviceID +'/sensor/' + sensorID + '/datapoints'
+        headerdata = {'U-ApiKey': Myapikey}
+        data_upload = DEALdata(value)
+        conn = httplib.HTTPConnection('api.yeelink.net')
+        conn.request(method='POST',url=yeelink,body = data_upload,headers = headerdata) 
+        response = conn.getresponse()
+        if response.reason == 'OK':
+                print 'Data has been uploaded!'
+        else:
+                print 'Upload faild!'
+                print response.reason
+
+
+class Qrcode(tornado.web.RequestHandler):
+    """生成二维码ticket"""
+    def get(self):
+        # 打开生成页面
+        self.render("qrcode.html")
+
+    def post(self):
+        # 生成二维码需要用post方法
+        pass
+        
+
 
 urls = [(r"/", MainHandler),
-        (r"/lockstate", ArduinoHandler),
+        # (r"/qrcode", Qrcode),
         ]
 
 

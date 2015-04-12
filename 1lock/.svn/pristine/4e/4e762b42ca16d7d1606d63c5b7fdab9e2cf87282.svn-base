@@ -29,24 +29,10 @@ wechat = WechatBasic(token=TOKEN, appid=APPID, appsecret=APPSECRET)
 class ArduinoHandler(tornado.web.RequestHandler):
     """响应Arduino的查询和更新锁状态"""
     def get(self):
-        self.lockticket = self.get_argument('lockticket')
-        self.lockadmin = self.get_argument('lockadmin')
+        self.lockname = self.get_argument('lockname')
         self.state = self.get_argument('updata')
-        lock = Lock(self.lockticket, self.lockadmin)
-        if self.state == '2':
-            if lock.islocked():
-                self.write("1")
-            else:
-                self.write("0")
-        elif self.state == '0':
-            lock.unlock()
-            self.write("unlock")
-        elif self.state == '1':
-            lock.lock()
-            self.write("lock")
-        else:
-            self.write("ERROR")
-
+        print self.lockname, self.state
+        self.write(self.lockname)
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):

@@ -39,3 +39,11 @@ NOTE：这个方式同样适用于测试其他串口通信的外围硬件，如�
 出到室外后，用手带上门，自动触发门锁上的关门开关……  
 
 > 接下来需要做一些真正的模型
+
+## 看起来还不错的demo——第一个版本
+这是第一个稳定版本，如最初的构想，只用Arduino＋SAE＋微信测试号。不需要yeelink。  
+SAE服务器代码：/1lock （使用的是第二个版本）  
+Arduino代码：/welock_sae_demo  
+
+使用体验如*"Arduino Ethernet Shield ＋ Yeelink"*中所述  
+只是去处了yeelink这个云平台，成最简单的“Arduino门锁 <<===>> SAE <<===>> 微信测试号”结构  
