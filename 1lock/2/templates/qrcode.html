@@ -1,0 +1,87 @@
+<html>
+
+<head>
+	<title>获取带参数的二维码</title>
+	<script type="text/javascript">
+	function get_ticket()
+	{
+		access_token = document.getElementById("at_01");
+		post_data = document.getElementById("pd_01");
+		// url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="+access_token.value;
+		url = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=BGl11G0NvGJ_CLJ7T0kgu3x_5GYdMg_AXPAZ1GfHkbOxEgNRc1B0e2MjGFuNohhcjpZNuC-RVzCKeUCcmWqxYo8lw7c0OyeMUbP1CZuAKOI"
+
+		var xmlhttp;
+		var data = {"expire_seconds": 1800, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": 123}}};
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp=new XMLHttpRequest();
+		}
+		else
+		{// code for IE6, IE5
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.onreadystatechange=function()
+		{
+			// alert("got it:"+xmlhttp.responseText);
+			if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+				alert("got it:"+xmlhttp.responseText);
+			}
+		}
+		xmlhttp.open("POST",url,true);
+		xmlhttp.setRequestHeader("Content-type","application/json");
+		xmlhttp.send(JSON.stringify(data));
+	}
+</script>
+</head>
+
+<body>
+	<h1>获取带参数的二维码</h1>
+	<hr />
+	<h2><b>创建二维码ticket</b></h2>
+	<p>每次创建二维码ticket需要提供一个开发者自行设定的参数（scene_id），分别介绍临时二维码和永久二维码的创建二维码ticket过程。</p>
+	<form>
+		access token：
+		<input type="text" id="at_01" name="access_token" />
+		post data:	
+		<input type="text" id="pd_01" name="post_data" />
+		<input type="button" value="get ticket" onclick="get_ticket()"/>
+	</form>
+
+
+	<p><b>临时二维码请求说明</b></p>
+	<pre>http请求方式: POST
+URL: <a href="https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=TOKEN" class="external free" rel="nofollow">https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=TOKEN</a>
+POST数据格式：json
+POST数据例子：{"expire_seconds": 1800, "action_name": "QR_SCENE", "action_info": {"scene": {"scene_id": 123}}}
+	</pre>
+	<p><b>永久二维码请求说明</b></p>
+	<pre>http请求方式: POST
+URL: <a href="https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=TOKEN" class="external free" rel="nofollow">https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=TOKEN</a>
+POST数据格式：json
+POST数据例子：{"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 123}}}
+或者也可以使用以下POST数据创建字符串形式的二维码参数：
+{"action_name": "QR_LIMIT_STR_SCENE", "action_info": {"scene": {"scene_str": "123"}}}
+	</pre>
+	<p><b>参数说明</b></p>
+	<table border="1" cellspacing="0" cellpadding="4" align="center" width="640px">
+		<tr><th style="width:240px">参数</th><th>说明</th></tr>
+		<tr><td> expire_seconds</td><td> 该二维码有效时间，以秒为单位。 最大不超过1800。</td></tr>
+		<tr><td> action_name</td><td> 二维码类型，QR_SCENE为临时,QR_LIMIT_SCENE为永久,QR_LIMIT_STR_SCENE为永久的字符串参数值</td></tr>
+		<tr><td> action_info</td><td> 二维码详细信息</td></tr>
+		<tr><td> scene_id</td><td> 场景值ID，临时二维码时为32位非0整型，永久二维码时最大值为100000（目前参数只支持1--100000）</td></tr>
+		<tr><td> scene_str</td><td> 场景值ID（字符串形式的ID），字符串类型，长度限制为1到64，仅永久二维码支持此字段</td></tr>
+	</table>
+	<p><b>返回说明</b></p>
+	<p>正确的Json返回结果:</p>
+	<pre>{"ticket":"gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm3sUw==","expire_seconds":60,"url":"http:\/\/weixin.qq.com\/q\/kZgfwMTm72WWPkovabbI"}</pre>
+	<table border="1" cellspacing="0" cellpadding="4" align="center" width="640px">
+		<tr><th style="width:240px">参数</th><th>说明</th></tr>
+		<tr><td> ticket</td><td> 获取的二维码ticket，凭借此ticket可以在有效时间内换取二维码。</td></tr>
+		<tr><td> expire_seconds</td><td> 二维码的有效时间，以秒为单位。最大不超过1800。</td></tr>
+		<tr><td> url</td><td> 二维码图片解析后的地址，开发者可根据该地址自行生成需要的二维码图片</td></tr>
+	</table>
+	<p>错误的Json返回示例:</p>
+	<pre>{"errcode":40013,"errmsg":"invalid appid"}</pre>
+	<p><a href="../17/fa4e1434e57290788bde25603fa2fcbd.html" class="external text" rel="nofollow">全局返回码说明</a></p>
+	<p><a href="http://mp.weixin.qq.com/debug/cgi-bin/apiinfo?t=index&amp;type=推广支持&amp;form=创建二维码ticket接口%20/qrcode/get" class="external text" rel="nofollow">使用网页调试工具调试该接口</a></p>
