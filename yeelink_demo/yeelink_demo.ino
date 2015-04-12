@@ -34,8 +34,8 @@ unsigned long lastLockTime = 0;
 
 #define PINUNLOCK 4
 #define PINLOCK 3
-boolean IsLock = false;
-boolean HaveSendState = false;
+boolean IsLock = true;
+boolean HaveSendState = true;
 
 void setup() {
   pinMode(2, OUTPUT);
@@ -43,8 +43,9 @@ void setup() {
   pinMode(PINLOCK, INPUT);
   Wire.begin();
   // start serial port:
- Serial.begin(9600);
-      myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  Serial.begin(9600);
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  myservo.write(120);
   // start the Ethernet connection with DHCP:
   if (Ethernet.begin(mac) == 0) {
     Serial.println("Failed to configure Ethernet using DHCP");
@@ -111,11 +112,11 @@ void loop() {
   if(!client.connected() && (millis() - lastConnectionTime > postingInterval) && (millis() - lastLockTime > postingInterval)) {
     // read sensor data, replace with your code
     //int sensorReading = readLightSensor();
-    Serial.print("yeelink:");
-    if(HaveSendState)
+//    Serial.println("yeelink:");
+    if(HaveSendState && IsLock)
       //get data from server  
       getData();
-    else
+    else if(!HaveSendState)
       sendLockState();
   }
   // store the state of the connection for next time through
@@ -126,6 +127,7 @@ void loop() {
 
 void unlock(void){
   digitalWrite(2, HIGH);
+  myservo.write(120);
   IsLock = false;
   lastLockTime = millis();
   HaveSendState = false;
@@ -134,6 +136,7 @@ void unlock(void){
 
 void lock(void){  
   digitalWrite(2, LOW);
+  myservo.write(30);
   IsLock = true;
   lastLockTime = millis();
   HaveSendState = false;
