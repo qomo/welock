@@ -211,7 +211,7 @@ class MainHandler(tornado.web.RequestHandler):
         mdb = database.Connection("%s:%s"%(MYSQL_HOST_M,str(MYSQL_PORT)), MYSQL_DB,MYSQL_USER, MYSQL_PASS)
         getinfo = mdb.get("SELECT `lockname` FROM `lock` WHERE `ticket_del` = %s", ticket_del)
         print getinfo, key
-        mdb.execute("DELETE FROM `lockkeypair` WHERE `lockname` = %s AND `key` = %s", getinfo['lockname'], key)
+        mdb.execute("DELETE FROM `lockkeypair` WHERE `lockname` = %s AND `key` = %s", lockname['lockname'], key)
 
     def get_apply_info(self, ticket):
         # 获取申请信息

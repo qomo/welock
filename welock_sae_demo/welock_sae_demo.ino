@@ -31,7 +31,7 @@ unsigned long lastLockTime = 0;
 
 void setup() {
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
-  myservo.write(120);
+  myservo.write(30);
 
   pinMode(PINLED, OUTPUT);
   pinMode(PINUNLOCK, INPUT);
@@ -125,7 +125,7 @@ void httpRequest(int cmd) {
 
 void unlock(void){
   digitalWrite(PINLED, HIGH);
-  myservo.write(120);
+  myservo.write(30);
   IsLock = false;
   lastLockTime = millis();
   HaveSendState = false;
@@ -134,7 +134,7 @@ void unlock(void){
 
 void lock(void){  
   digitalWrite(PINLED, LOW);
-  myservo.write(30);
+  myservo.write(120);
   IsLock = true;
   lastLockTime = millis();
   HaveSendState = false;

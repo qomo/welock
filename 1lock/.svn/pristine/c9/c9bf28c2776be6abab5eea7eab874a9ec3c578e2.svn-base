@@ -102,12 +102,12 @@ class MainHandler(tornado.web.RequestHandler):
                 #     chekey = message.source
                 #     rt = addlock(lockname, adminkey, chekey)
                 #     response = wechat.response_text(rt)
-                # elif cmd[0] == "dellock":
-                #     # print "del lock"
-                #     lockname = cmd[1]
-                #     chekey = message.source
-                #     rt = dellock(lockname, chekey)
-                #     response = wechat.response_text(rt)
+                elif cmd[0] == "dellock":
+                    # print "DEL LOCK"
+                    lockname = cmd[1]
+                    chekey = message.source
+                    rt = dellock(lockname, chekey)
+                    response = wechat.response_text(rt)
                 # elif cmd[0] == "addkey":
                 #     # print "ADD KEY"
                 #     lockname = cmd[1]
@@ -184,10 +184,6 @@ class MainHandler(tornado.web.RequestHandler):
                 lock = Lock(lockticket, chekey)
                 res = lock.addkey(apply_key)
                 response = wechat.response_text(res)
-            elif cmd == "delkey":
-                chekey = message.source
-                self.dele_key(ticket, chekey)
-                response = wechat.response_text("删除key成功！")
             else:
                 response = wechat.response_text("不可识别的二维码")
         else:
@@ -207,12 +203,6 @@ class MainHandler(tornado.web.RequestHandler):
         mdb.execute("INSERT INTO `lockkeypairtmp` (`lockticket`,`key`, `ticket`) values(%s,%s,%s)", lockticket, key, ticket)
         mdb.close()
 
-    def dele_key(self, ticket_del, key):
-        mdb = database.Connection("%s:%s"%(MYSQL_HOST_M,str(MYSQL_PORT)), MYSQL_DB,MYSQL_USER, MYSQL_PASS)
-        getinfo = mdb.get("SELECT `lockname` FROM `lock` WHERE `ticket_del` = %s", ticket_del)
-        print getinfo, key
-        mdb.execute("DELETE FROM `lockkeypair` WHERE `lockname` = %s AND `key` = %s", getinfo['lockname'], key)
-
     def get_apply_info(self, ticket):
         # 获取申请信息
         mdb = database.Connection("%s:%s"%(MYSQL_HOST_M,str(MYSQL_PORT)), MYSQL_DB,MYSQL_USER, MYSQL_PASS)
@@ -231,8 +221,6 @@ class MainHandler(tornado.web.RequestHandler):
         elif mdb.get("SELECT `lockticket` FROM `lockkeypairtmp` WHERE `ticket` = %s", ticket):
             # ticket在临时添加锁匙对列表中，尝试添加锁匙对
             cmd = "addkey"
-        elif mdb.get("SELECT `lockname` FROM `lock` WHERE `ticket_del` = %s", ticket):
-            cmd = "delkey"
         else:
             cmd = "unknown"
         mdb.close()
@@ -288,7 +276,7 @@ class Lock():
             return False
 
     def addkey(self, addedkey):
-        # 需要锁调用者self.__key是管理者self.__adminkey
+        # 需要锁调用者self.__key是管理者key
         if self.__adminkey == self.__key:
             # 如果chekey是该锁的管理者，执行添加操作
             self.mdb._ensure_connected()
@@ -303,8 +291,8 @@ class Lock():
             return u'你不是该锁的管理者'
 
     def delkey(self, delkey):
-        # 需要锁调用者self.__key是管理者self.__adminkey，或者调用者self.__key就是要删除的delkey
-        if (self.__adminkey == self.__key) or (self.__key == delkey):
+        # 需要锁调用者self.__key是管理者key
+        if self.__adminkey == self.__key:
             # 如果chekey是该锁的管理者，执行删除操作
             self.mdb._ensure_connected()
             if self.check_key(delkey):
