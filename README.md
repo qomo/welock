@@ -4,7 +4,7 @@ Welock是一个微信门锁
 基本想法是通过手机微信扫描门锁上的二维码实现开门的功能  
 基本结构：门锁 <<===>> SAE <<===>> 微信测试号
 
-门锁用Arduino＋ESP2866 Wi-Fi模块与SAE服务器通信，接收开锁命令。  
+门锁用Arduino＋网络模块与SAE服务器通信，接收开锁命令。  
 SAE服务器同时作为微信测试号的接口服务器，用于响应服务号的请求。
 
 ## Arduino虚拟串口测试ESP2866
@@ -31,6 +31,7 @@ NOTE：这个方式同样适用于测试其他串口通信的外围硬件，如�
 另一个开关用做本地开门的动作，置于门内侧  
 
 另一个开门动作由微信触发，用作门外开门（基本已经完成，待与yeelink连接）  
+**Note:** 后来发现，SAE不好对yeelink发送http请求，于是放弃yeelink，让Arduino硬件直接与SAE通信
 
 *使用场景介绍：*  
 假如要从外面开门进入室内，需要用微信扫描门锁上的二维码，微信给SAE服务器发送响应指令，SAE向yeelink发送开门指令，Arduino轮训yeelink上的开门指令获得开门指令，实施开门  
@@ -45,5 +46,11 @@ NOTE：这个方式同样适用于测试其他串口通信的外围硬件，如�
 SAE服务器代码：/1lock （使用的是第二个版本）  
 Arduino代码：/welock_sae_demo  
 
-使用体验如*"Arduino Ethernet Shield ＋ Yeelink"*中所述  
+使用体验如"Arduino Ethernet Shield ＋ Yeelink"中所述  
 只是去处了yeelink这个云平台，成最简单的“Arduino门锁 <<===>> SAE <<===>> 微信测试号”结构  
+
+## 联系我
+如果你对这个项目感兴趣，可以与我交流：
+Email：qomoliao@gmail.com
+微信：qomoliao
+或许你也对我个人的Blog感兴趣：qomo.sinaapp.com

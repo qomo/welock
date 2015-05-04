@@ -14,7 +14,7 @@ APPSECRET = "bd606db899aa6173ee0d2a66ba9d8706"
 
 MENU = '''欢迎关注1lock，这是一个用微信控制的门锁:
 请微信扫描门锁上的二维码^_^
-－－－－－－－－－－－－－
+－－－－－－－－－－－－－－
 了解更多：
 https://github.com/qomo/welock
 '''
