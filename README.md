@@ -50,7 +50,7 @@ Arduino代码：/welock_sae_demo
 只是去处了yeelink这个云平台，成最简单的“Arduino门锁 <<===>> SAE <<===>> 微信测试号”结构  
 
 ## 联系我
-如果你对这个项目感兴趣，可以与我交流：
-Email：qomoliao@gmail.com
-微信：qomoliao
-或许你也对我个人的Blog感兴趣：qomo.sinaapp.com
+如果你对这个项目感兴趣，可以与我交流：  
+Email：qomoliao@gmail.com  
+微信：qomoliao  
+或许你也对我个人的Blog感兴趣：qomo.sinaapp.com  
